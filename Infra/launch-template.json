@@ -1,0 +1,7 @@
+{
+  "ImageId": "ami-02867e80f0c951f8b",
+  "InstanceType": "t2.micro",
+  "SecurityGroupIds": [""],
+  "KeyName": "",
+  "UserData": ""
+}
