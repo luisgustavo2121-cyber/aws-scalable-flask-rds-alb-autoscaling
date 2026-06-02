@@ -2,9 +2,9 @@
 
 ## 📌 Visão Geral
 
-Este projeto demonstra a implementação de uma aplicação web escalável e resiliente utilizando Python (Flask) e serviços da AWS.
+Este projeto demonstra a construção de uma aplicação web escalável e resiliente utilizando Python (Flask) e serviços da AWS.
 
-A solução foi construída com foco em arquitetura de produção, utilizando balanceamento de carga, escalabilidade automática e banco de dados gerenciado.
+A arquitetura foi projetada para suportar alta disponibilidade, balanceamento de carga e escalabilidade automática, simulando um ambiente próximo de produção.
 
 ---
 
@@ -32,7 +32,7 @@ Amazon RDS (PostgreSQL)
 * AWS Auto Scaling Group (ASG)
 * Python (Flask)
 * Amazon Linux
-* systemd (gerenciamento de serviço)
+* systemd
 
 ---
 
@@ -43,94 +43,139 @@ Amazon RDS (PostgreSQL)
 * ✔ Persistência de dados com RDS
 * ✔ Provisionamento automático via User Data
 * ✔ Aplicação gerenciada como serviço (systemd)
-* ✔ Alta disponibilidade e tolerância a falhas
+* ✔ Alta disponibilidade
 
 ---
 
 ## 🔐 Segurança
 
 * Banco de dados RDS sem acesso público
-* Acesso ao banco restrito ao Security Group das instâncias EC2
-* Porta 22 (SSH) limitada ao IP autorizado
-* Tráfego HTTP controlado via Load Balancer
+* Acesso ao banco restrito ao Security Group das EC2
+* SSH limitado ao IP autorizado
+* Tráfego controlado via Load Balancer
 
 ---
 
 ## 🚀 Estratégia de Deploy
 
-Cada instância EC2 é configurada automaticamente ao iniciar, utilizando **User Data**, que realiza:
+Cada instância EC2 é configurada automaticamente via **User Data**, que:
 
-* Instalação do Python e dependências
-* Deploy da aplicação Flask
-* Configuração de variáveis de ambiente
-* Criação de serviço systemd
-* Inicialização automática da aplicação
+* Instala Python e dependências
+* Configura a aplicação Flask
+* Define variáveis de ambiente
+* Cria um serviço systemd
+* Inicia automaticamente a aplicação
 
 ---
 
 ## 🔗 Endpoints
 
-* `/` → Verificação de funcionamento da aplicação
-* `/add` → Inserção de dados no banco
-* `/list` → Consulta de dados armazenados
+* `/` → Verificação da aplicação
+* `/add` → Inserção de dados
+* `/list` → Consulta de dados
 
 ---
 
-## 🧪 Testes Realizados
+# 📸 Evidências
 
-* ✔ Acesso à aplicação via DNS do ALB
-* ✔ Distribuição de carga entre múltiplas instâncias
-* ✔ Instâncias marcadas como **healthy** no Target Group
-* ✔ Criação automática de instâncias pelo Auto Scaling
-* ✔ Aplicação continua disponível mesmo com falha de instância
+## 🌐 Load Balancer funcionando
 
----
+A aplicação é acessada via DNS do ALB:
 
-## ⚠️ Problemas Enfrentados e Soluções
+![ALB 1](./evidencias/alb-working-host1.png)
+![ALB 2](./evidencias/alb-working-host2.png)
 
-### 🔴 Falha na execução do User Data
-
-* Causa: problemas de formatação e contexto de execução
-* Solução: simplificação do script e melhoria nos logs
+📌 Observação: é possível ver diferentes instâncias respondendo, comprovando o balanceamento de carga.
 
 ---
 
-### 🔴 Erro de ambiente Python (Flask não encontrado)
+## 🟢 Target Group saudável
 
-* Causa: conflito entre `pip` e `python`
+Instâncias registradas e saudáveis no Target Group:
+
+![Target Group](./evidencias/target-group-healthy.png)
+
+📌 Health checks funcionando corretamente.
+
+---
+
+## 📈 Auto Scaling em execução
+
+Múltiplas instâncias rodando automaticamente:
+
+![ASG](./evidencias/autoscaling.png)
+
+📌 Garantia de escalabilidade e alta disponibilidade.
+
+---
+
+## 🔄 Histórico de escalabilidade
+
+Eventos de criação e remoção de instâncias:
+
+![ASG Activity](./evidencias/autoscaling-activity.png)
+
+📌 Demonstra comportamento dinâmico do Auto Scaling.
+
+---
+
+## ⚙️ Aplicação como serviço (systemd)
+
+Aplicação rodando como serviço gerenciado:
+
+![Systemd](./evidencias/systemd-service.png)
+
+📌 Reinício automático e maior confiabilidade.
+
+---
+
+## ⚙️ Persistencia dos dados (RDS Database)
+
+Dados inseridos no banco de dados
+
+![RDS](./evidencias/rds-working.png)
+
+---
+
+## ⚠️ Problemas Enfrentados
+
+### 🔴 User Data não executava corretamente
+
+* Causa: problemas de formatação e contexto
+* Solução: simplificação e logging
+
+### 🔴 Flask não era encontrado
+
+* Causa: conflito entre pip e python
 * Solução: uso de `python3 -m pip`
 
----
+### 🔴 Aplicação não persistia
 
-### 🔴 Aplicação não persistente
-
-* Causa: uso de `nohup` sem controle adequado
-* Solução: implementação de serviço com **systemd**
-
----
+* Causa: uso de `nohup`
+* Solução: implementação com systemd
 
 ### 🔴 Erro 502 no Load Balancer
 
-* Causa: aplicação não estava rodando corretamente
-* Solução: garantir inicialização confiável via systemd
+* Causa: aplicação não estava rodando
+* Solução: correção do processo de inicialização
 
 ---
 
 ## 📚 Aprendizados
 
-* Diferença entre erros de infraestrutura e aplicação
-* Debug de scripts de inicialização (cloud-init / user-data)
-* Importância do ambiente de execução em aplicações Python
-* Funcionamento do ALB e health checks
-* Construção de sistemas resilientes em cloud
+* Debug de cloud-init e user-data
+* Diferença entre erro de infra e aplicação
+* Funcionamento de ALB e health checks
+* Automação de deploy em cloud
+* Construção de sistemas resilientes
 
 ---
 
 ## 🚀 Melhorias Futuras
 
-* Implementação de HTTPS com AWS ACM
-* Uso de Nginx como reverse proxy
-* Pipeline CI/CD (GitHub Actions)
+* HTTPS com AWS ACM
+* Nginx como reverse proxy
+* CI/CD com GitHub Actions
 * Monitoramento com CloudWatch
 * Containerização com Docker
 
@@ -138,4 +183,4 @@ Cada instância EC2 é configurada automaticamente ao iniciar, utilizando **User
 
 ## 👨‍💻 Luis Gustavo
 
-Projeto desenvolvido como prática avançada em Cloud Computing e desenvolvimento backend, com foco em arquitetura escalável na AWS.
+Projeto desenvolvido como prática avançada em Cloud Computing e backend, com foco em arquitetura escalável na AWS.
