@@ -181,6 +181,17 @@ Dados inseridos no banco de dados
 
 ---
 
+## ⚙️ Infraestrutura como Código
+
+Os principais arquivos de configuração estão disponíveis:
+
+- 📄 [User Data Script](./scripts/user-data.sh)
+- 📄 [Launch Template](./infra/launch-template.json)
+
+Esses arquivos são responsáveis por automatizar o provisionamento das instâncias EC2 e garantir que a aplicação esteja sempre disponível no ambiente de Auto Scaling.
+
+---
+
 ## 👨‍💻 Luis Gustavo
 
 Projeto desenvolvido como prática avançada em Cloud Computing e backend, com foco em arquitetura escalável na AWS.
